@@ -11,34 +11,34 @@ use App\Models\Subscriber;
 use App\Models\Website;
 use Illuminate\Http\Request;
 
-    class PostController extends Controller
-    {
-        public function addPost(PostRequest $request)
+        class PostController extends Controller
         {
-            $existingWebsite = Website::where('id', $request->website_id)->exists();
-            if (!$existingWebsite){
-                return response()->json(['message'=>"website doesn't exist"]);
-            }
-            $post = Post::create([
-                'website_id' => $request->website_id,
-                'title' =>$request->title,
-                'description' =>$request->description,
-            ]);
-            $subscribers = Subscriber::where('website_id', $post->website_id)->get();
-
-            foreach ($subscribers as $subscriber){
-                Email::create([
-                    'subscriber_id'=> $subscriber->id,
-                    'post_id'=> $post->id,
+            public function addPost(PostRequest $request)
+            {
+                $existingWebsite = Website::find($request->website_id);
+                if (!$existingWebsite){
+                    return response()->json(['message'=>"website doesn't exist"]);
+                }
+                $post = Post::create([
+                    'website_id' => $request->website_id,
+                    'title' =>$request->title,
+                    'description' =>$request->description,
                 ]);
-                MailSending::dispatch($subscriber, $post)->onQueue('emails');
+                $subscribers = Subscriber::where('website_id', $post->website_id)->get();
+
+                foreach ($subscribers as $subscriber){
+                    Email::create([
+                        'subscriber_id'=> $subscriber->id,
+                        'post_id'=> $post->id,
+                    ]);
+                    MailSending::dispatch($subscriber, $post, $existingWebsite->name)->onQueue('emails');
+                }
+                return response()->json(['message' => 'Subscription created successfully', 'data' => $post], 201);
             }
-            return response()->json(['message' => 'Subscription created successfully', 'data' => $post], 201);
-        }
         public function getWebsitePosts(Request $request)
         {
             $websiteId = $request->input('website_id');
-            $posts = Post::where('website_id', $websiteId)->get();
+            $posts = Post::where('website_id', $websiteId)->paginate(1);
             if ($posts->isEmpty()){
                 return response()->json(['message'=>"no posts" ], 404);
             }

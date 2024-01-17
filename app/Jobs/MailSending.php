@@ -7,6 +7,7 @@ use App\Models\Email;
 use App\Models\Post;
 use App\Models\Subscriber;
 use App\Models\User;
+use App\Models\Website;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -21,17 +22,19 @@ class   MailSending implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     public $subscriber;
     public $post;
+    public $websiteName;
 
-    public function __construct(Subscriber $subscriber, Post $post)
+    public function __construct(Subscriber $subscriber, Post $post, Website $websiteName)
     {
         $this->subscriber = $subscriber;
         $this->post = $post;
+        $this->websiteName = $websiteName;
     }
 
     public function handle(): void
     {
         $this->onQueue('emails');
-            Mail::to($this->subscriber->user->email)->send(new SendNotification($this->post));
+            Mail::to($this->subscriber->user->email)->send(new SendNotification($this->post, $this->websiteName->name));
 
     }
 }

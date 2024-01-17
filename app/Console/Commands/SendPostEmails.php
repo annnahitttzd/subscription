@@ -22,7 +22,8 @@ class SendPostEmails extends Command
                     foreach ($post->emails as $email) {
                         if (!$email->sent_status) {
                             $subscriber = $email->subscriber;
-                            MailSending::dispatch($subscriber, $post)->onQueue('emails');
+                            $websiteName=$post->website;
+                            MailSending::dispatch($subscriber, $post, $websiteName )->onQueue('emails');
                             $email->update(['sent_status' => true]);
                         }
                     }
@@ -30,9 +31,5 @@ class SendPostEmails extends Command
 
             });
         }
-
-
-
-
 
     }

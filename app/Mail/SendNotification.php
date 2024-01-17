@@ -10,19 +10,25 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class SendNotification extends Mailable
-{
-    use Queueable, SerializesModels;
-
-    public $post;
-    public function __construct(Post $post)
+    class SendNotification extends Mailable
     {
-        $this->post= $post;
-    }
-    public function build()
-    {
-        return $this->view('email', ['post' => $this->post])
-            ->subject('New Post');
-    }
+        use Queueable, SerializesModels;
 
-}
+        public $post;
+        public $websiteName;
+        public function __construct(Post $post, $websiteName)
+        {
+            $this->post= $post;
+            $this->websiteName = $websiteName;
+
+        }
+        public function build()
+        {
+            return $this->view('email', [
+                'post' => $this->post,
+                'websiteName'=>$this->websiteName
+            ])
+                ->subject('New Post');
+        }
+
+    }
