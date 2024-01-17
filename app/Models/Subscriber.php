@@ -8,4 +8,23 @@ use Illuminate\Database\Eloquent\Model;
 class Subscriber extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'user_id',
+        'website_id',
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function website()
+    {
+        return $this->belongsTo(Website::class);
+    }
+    public function emails()
+    {
+        return $this->hasMany(Email::class, 'subscriber_id');
+    }
 }

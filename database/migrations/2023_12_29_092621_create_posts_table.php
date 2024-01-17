@@ -6,16 +6,16 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up(): void
-    {
-        Schema::create('posts', function (Blueprint $table) {
-            $table->id();
-            $table->integer('website_id');
-            $table->string('title');
-            $table->string('description');
-            $table->timestamps();
-        });
-    }
+        public function up(): void
+        {
+            Schema::create('posts', function (Blueprint $table) {
+                $table->id();
+                $table->integer('website_id');
+                $table->string('title');
+                $table->text('description');
+                $table->timestamps();
+            });
+        }
 
     public function down(): void
     {
