@@ -31,7 +31,7 @@ use Illuminate\Http\Request;
                         'subscriber_id'=> $subscriber->id,
                         'post_id'=> $post->id,
                     ]);
-                    MailSending::dispatch($subscriber, $post, $existingWebsite->name)->onQueue('emails');
+                    MailSending::dispatch($subscriber, $post, $existingWebsite)->onQueue('emails');
                 }
                 return response()->json(['message' => 'Subscription created successfully', 'data' => $post], 201);
             }
