@@ -17,22 +17,22 @@ use Illuminate\Http\Request;
             {
                 $existingWebsite = Website::find($request->website_id);
                 if (!$existingWebsite){
-                    return response()->json(['message'=>"website doesn't exist"]);
+                    return response()->json(['message'=>"website doesn't exist"], 404);
                 }
                 $post = Post::create([
                     'website_id' => $request->website_id,
                     'title' =>$request->title,
                     'description' =>$request->description,
                 ]);
-                $subscribers = Subscriber::where('website_id', $post->website_id)->get();
-
-                foreach ($subscribers as $subscriber){
-                    Email::create([
-                        'subscriber_id'=> $subscriber->id,
-                        'post_id'=> $post->id,
-                    ]);
-                    MailSending::dispatch($subscriber, $post, $existingWebsite)->onQueue('emails');
-                }
+//                $subscribers = Subscriber::where('website_id', $post->website_id)->get();
+//
+//                foreach ($subscribers as $subscriber){
+//                    Email::create([
+//                        'subscriber_id'=> $subscriber->id,
+//                        'post_id'=> $post->id,
+//                    ]);
+//                    MailSending::dispatch($subscriber, $post, $existingWebsite)->onQueue('emails');
+//                }
                 return response()->json(['message' => 'Subscription created successfully', 'data' => $post], 201);
             }
         public function getWebsitePosts(Request $request)
